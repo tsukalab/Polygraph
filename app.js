@@ -32,8 +32,8 @@ io.sockets.on('connection', function(socket) {
                 console.log("Error " + err);
             });
             // 1. Add a data.
-            console.log("追加したいデータ: " + data.value)
-            client.lpush("mylist", data.value);
+            console.log("追加したいデータ: " + data)
+            client.lpush("mylist", data);
 
             // 2. Redisの中にデータが10個無ければreturn 0
             client.llen("mylist", function(err, len){
@@ -42,7 +42,7 @@ io.sockets.on('connection', function(socket) {
             });
 
             if(span < 10){
-                io.sockets.emit("publish", 1);
+                return null;
             // 2. Redisの中にデータが10個あれば
             }else if (span >= 10){
                 // 10個取り出して引数として次のコマンドに渡す
@@ -89,8 +89,8 @@ io.sockets.on('connection', function(socket) {
                     // 標準出力を取得
                     console.log(stdout);
                     // 1or0を返す
-                    if (stdout == "[1] -1"){io.sockets.emit("publish", -1);}
-                    if (stdout == "[1] 1"){io.sockets.emit("publish", 1);}
+                    if (stdout == "[1] -1"){return null;}
+                    if (stdout == "[1] 1"){socket.emit("publish", 1);}
                 });
                 // 一個取り出す
                 client.rpop("mylist");
